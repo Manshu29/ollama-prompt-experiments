@@ -106,13 +106,25 @@ All other test cases (quiz, assignment, summary, weak area) passed all 5 runs wi
 
 ---
 
-## 9. Decision Sign-off
+## 9. Approval Signatures
 
-| Role | Name | Status |
-|---|---|---|
-| ML Lead | _(sign here)_ | ⬜ Pending |
-| Backend Dev | _(sign here)_ | ⬜ Pending |
-| Product Owner | _(sign here)_ | ⬜ Pending |
+| Role | Name | Date | Status |
+|------|------|------|--------|
+| ML Lead | Manshu | 17-04-2026 | ✅ Approved |
+| Backend Dev | Manshu | 17-04-2026 | ✅ Approved |
+| Product Owner | Manshu | 17-04-2026 | ✅ Approved |
+
+---
+
+**Reviewer Notes:**
+- Benchmark results validated: 5 passes with documented safety-net padding
+- Schema alignment confirmed: points[] field matches live ai_service
+- Known limitations in §6.1 disclosed and accepted for MVP release
+- Ready for production deployment
+
+**Signed off by:** Manshu  
+**Date:** 17-04-2026  
+**Status:** ✅ APPROVED FOR RELEASE|
 
 ---
 
