@@ -16,3 +16,8 @@ AI/ML MVP project for an education platform using local Ollama models.
 
 ## Status
 ✅ Final package ready for Manshu review — see `REVIEW_EVIDENCE.md`
+## AI Output Review Checklist
+
+Before accepting AI-generated outputs (quiz, curriculum, assignment, etc.), we use a standardized checklist to ensure quality, correctness, and usability.
+
+📄 [View AI Output Acceptance Checklist](docs/ai_output_acceptance_checklist.md)
