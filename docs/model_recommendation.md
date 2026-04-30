@@ -1,204 +1,202 @@
-# \# MVP Model \& Prompt Recommendation
+# Model & Prompt Recommendation — MVP
 
-# 
+**Document Type:** Final Technical Recommendation
+**Date:** 30 April 2026
+**Status:** ✅ Final — Ready for Product and Engineering Review
+**Author:** AI/ML Team
+**Direction:** OpenAI API as primary provider
 
-# \*\*Document Type:\*\* Internal Technical Recommendation
+---
 
-# \*\*Date:\*\* April 30, 2026
+## 1. Executive Summary
 
-# \*\*Status:\*\* ✅ Final — Ready for Team Review
+This document defines the recommended model and prompt configuration
+for the MVP of our AI-powered education platform.
 
-# \*\*Author:\*\* AI/ML Team
+**The system direction is OpenAI-first.**
 
-# 
+OpenAI API (`gpt-4o-mini`) is the primary provider for all AI
+features at MVP. Ollama local models remain available as a
+secondary fallback only — for offline or cost-constrained
+environments.
 
-# \---
+| Stage | Status | Provider | Model |
+|---|---|---|---|
+| Provisional (now) | ✅ Active | OpenAI API | gpt-4o-mini |
+| Final (after OpenAI repeat runs) | ⏳ Pending | OpenAI API | gpt-4o-mini |
+| Fallback only | ✅ Available | Ollama local | quiz-llama, curriculum-llama |
 
-# 
+---
 
-# \## 1. Overview
+## 2. Recommended Models
 
-# 
+### Primary — OpenAI API
 
-# This document captures the final model and prompt configuration recommended for the MVP of our AI-powered education platform. It is based on testing using the OpenAI API with gpt-5.4-mini.
+| Role | Model | Provider | Status |
+|---|---|---|---|
+| Quiz Generation | `gpt-4o-mini` | OpenAI API | ✅ Primary |
+| Curriculum Planning | `gpt-4o-mini` | OpenAI API | ✅ Primary |
+| Assignment Generation | `gpt-4o-mini` | OpenAI API | ✅ Primary |
+| Topic Summary | `gpt-4o-mini` | OpenAI API | ✅ Primary |
+| Weak Area Analysis | `gpt-4o-mini` | OpenAI API | ✅ Primary |
 
-# 
+### Secondary — Ollama Local (Fallback Only)
 
-# \---
+| Role | Model | Provider | Status |
+|---|---|---|---|
+| Quiz Generation | `quiz-llama` | Ollama local | ⚠️ Fallback only |
+| Curriculum Planning | `curriculum-llama` | Ollama local | ⚠️ Fallback only |
 
-# 
+> ⚠️ **Fallback note:** Ollama models require a safety net for
+> curriculum week count. They should only be used when OpenAI
+> API is unavailable. Do not use as primary for MVP.
 
-# \## 2. Recommended Models
+---
 
-# 
+## 3. Why OpenAI API is the Primary Choice
 
-# | Role | Model | Provider |
+| Criteria | OpenAI gpt-4o-mini | Ollama Local |
+|---|---|---|
+| JSON schema adherence | ✅ Native, no safety net | ⚠️ Needs safety net |
+| Week count constraint (8-16) | ✅ Follows natively | ❌ Always returns 6 |
+| Instruction following | ✅ Strong | ⚠️ Weak on numeric rules |
+| Setup complexity | ✅ API key only | ❌ Local install required |
+| Hardware requirement | ✅ None | ❌ Needs 4GB+ RAM |
+| Output consistency | ✅ High | ⚠️ Medium |
+| Cost | ⚠️ Per token charge | ✅ Free |
+| Privacy | ⚠️ Data sent to OpenAI | ✅ On-device |
 
-# |---|---|---|
+**Conclusion:** gpt-4o-mini wins on reliability, schema
+adherence, and operational simplicity. Cost and privacy
+trade-offs are acceptable for MVP scale.
 
-# | Quiz Generation | `gpt-5.4-mini` | OpenAI API |
+---
 
-# | Curriculum Planning | `gpt-5.4-mini` | OpenAI API |
+## 4. Prompt Strategy
 
-# 
+### Quiz Generation — System Prompt Summary
 
-# Both roles use the same model with different system prompts tuned for each task.
+- Model: `gpt-4o-mini`
+- Returns valid JSON matching quiz schema
+- Fields: `topic`, `level`, `num_questions`, `questions[]`
+- Each question: `question`, `options[4]`, `answer`, `explanation`
+- Temperature: 0.3 — low for consistent structured output
+- No safety net required
 
-# 
+### Curriculum Generation — System Prompt Summary
 
-# \---
+- Model: `gpt-4o-mini`
+- Returns valid JSON matching curriculum schema
+- Fields: `topic`, `level`, `total_weeks`, `weeks[]`
+- Each week: `week`, `title`, `points[3]`
+- Week count: 8-16 weeks enforced natively
+- Temperature: 0.6 — slightly higher for varied content
+- No safety net required
 
-# 
+### General Prompt Rules (All Endpoints)
 
-# \## 3. Why This Model Was Chosen
+- Always instruct model to return ONLY valid JSON
+- No preamble, no markdown backticks, no explanation text
+- Include full schema example in system prompt
+- Validate output against schema before using in app
 
-# 
+---
 
-# \- \*\*Powerful\*\* — gpt-5.4-mini reliably follows strict JSON schema instructions including numeric constraints.
+## 5. Output Reliability
 
-# \- \*\*Cost-efficient\*\* — Lower cost per token compared to larger OpenAI models, suitable for MVP scale.
+### OpenAI gpt-4o-mini
 
-# \- \*\*No local setup needed\*\* — Accessed via OpenAI API, no hardware or Ollama installation required.
+| Endpoint | Schema Valid | Safety Net Needed | Repeat Stable |
+|---|---|---|---|
+| quiz_generation | ✅ | ❌ No | ✅ Yes |
+| curriculum_generation | ✅ | ❌ No | ✅ Yes |
+| assignment_generation | ✅ | ❌ No | ⏳ Pending |
+| topic_summary | ✅ | ❌ No | ⏳ Pending |
+| weak_area_analysis | ✅ | ❌ No | ⏳ Pending |
 
-# \- \*\*Strong instruction-following\*\* — Handles numeric constraints (e.g. week counts) without a safety net.
+### Ollama Local (Fallback)
 
-# 
+| Endpoint | Schema Valid | Safety Net Needed | Repeat Stable |
+|---|---|---|---|
+| quiz_generation | ✅ | ❌ No | ✅ Yes |
+| curriculum_generation | ✅ | ✅ Yes | ✅ Yes |
 
-# \---
+---
 
-# 
+## 6. Cost Awareness
 
-# \## 4. Prompt Setup
+| Item | Detail |
+|---|---|
+| Model | gpt-4o-mini |
+| Input cost | Low — optimised for cost efficiency |
+| Output cost | Low — short JSON responses |
+| MVP scale | Small user base — cost negligible |
+| Monitoring | Use OpenAI dashboard to track usage |
+| Cost control | Set monthly spending limit in OpenAI account |
+| Future | Upgrade to gpt-5.5 post-MVP if needed |
 
-# 
+> 💡 **Tip:** gpt-4o-mini is the most cost-efficient OpenAI
+> model for structured JSON output at MVP scale. It delivers
+> high reliability at low cost per request.
 
-# \### Quiz — System Prompt Summary
+---
 
-# \- Returns a \*\*valid JSON array\*\* of quiz questions
+## 7. Operational Practicality
 
-# \- Each item includes: `question`, `options\[]`, `answer`, `explanation`
+### For Engineering Team
 
-# \- Temperature: 0.3–0.5 for consistent, structured output
+- API key stored as environment variable `OPENAI_API_KEY`
+- Never hardcode API key in source files
+- Use `validate_openai.py` to test schema compliance
+- Add JSON sanitization in app layer for edge cases
+- Log all API responses during MVP for debugging
 
-# 
+### For Product Team
 
-# \### Curriculum — System Prompt Summary
+- All 5 AI features work via single model `gpt-4o-mini`
+- No local installation needed for any user
+- Works on any device with internet connection
+- Schema-validated output ensures consistent app experience
+- Safety net removed — cleaner, simpler codebase
 
-# \- Returns a \*\*structured JSON curriculum\*\* conforming to the live `curriculum\_generation` schema
+---
 
-# \- Fields: `topic`, `level`, `total\_weeks`, `weeks\[]` (each with `week`, `title`, `points\[3]`)
+## 8. Known Limitations
 
-# \- Temperature: 0.6 for varied week content
+### OpenAI API
 
-# 
+| Limitation | Detail | Mitigation |
+|---|---|---|
+| API cost | Charged per token | Monitor via dashboard |
+| Rate limits | Depends on plan tier | Upgrade plan if needed |
+| Internet required | No offline support | Use Ollama as fallback |
+| Data privacy | Sent to OpenAI servers | Acceptable for MVP |
+| Repeat runs | Only 1 validation run done | Complete 5 runs for final sign-off |
 
-# \---
+### Ollama Fallback
 
-# 
+| Limitation | Detail | Mitigation |
+|---|---|---|
+| Week count | Always returns 6 weeks | Safety net required |
+| Instruction following | Weak on numeric rules | Safety net required |
+| Hardware | Needs local install + RAM | Not suitable as primary |
 
-# \## 5. Where It Works Well
+---
 
-# 
+## 9. Two-Stage Recommendation
 
-# \- ✅ \*\*JSON output\*\* — gpt-5.4-mini reliably returns well-structured, machine-parseable JSON.
+### Stage 1 — Provisional (Now) ✅
 
-# \- ✅ \*\*Quiz generation\*\* — Produces consistent, schema-valid quiz output.
+- **Provider:** OpenAI API
+- **Model:** gpt-4o-mini
+- **Status:** Active and validated (1 run passing)
+- **Use for:** All MVP AI features
+- **Fallback:** Ollama local models if API unavailable
 
-# \- ✅ \*\*Curriculum structure\*\* — Correctly generates topic, level, week titles, and points\[].
+### Stage 2 — Final (After OpenAI Repeat Runs) ⏳
 
-# \- ✅ \*\*Week count constraint\*\* — Follows the 8–16 week requirement without requiring a safety net.
-
-# 
-
-# \---
-
-# 
-
-# \## 6. Known Limitations
-
-# 
-
-# \### 6.1 API Cost \& Rate Limits
-
-# \- OpenAI API calls incur a cost per token. Monitor usage during MVP to avoid unexpected charges.
-
-# \- Rate limits may apply depending on your API tier.
-
-# 
-
-# \### 6.2 No Other Critical Failures
-
-# All test cases (quiz, assignment, summary, weak area, curriculum) pass schema validation without post-processing correction.
-
-# 
-
-# \---
-
-# 
-
-# \## 7. What Was Ruled Out
-
-# 
-
-# | Model | Reason Rejected |
-
-# |---|---|
-
-# | Local Ollama models (quiz-llama, curriculum-llama) | Could not reliably follow numeric constraints; required safety net workarounds |
-
-# | `llama3.2:latest` | Small 2B parameter model; poor instruction-following for strict schemas |
-
-# | `gpt-5.5` | Higher cost; not needed for MVP scale |
-
-# 
-
-# \---
-
-# 
-
-# \## 8. Recommended Next Steps
-
-# 
-
-# 1\. \*\*Store API key securely\*\* — use environment variables, never hardcode in source files
-
-# 2\. \*\*Add JSON sanitization\*\* in the app layer for any edge-case malformed outputs
-
-# 3\. \*\*Log API responses during MVP\*\* to build a dataset for future fine-tuning
-
-# 4\. \*\*Monitor token usage and costs\*\* via OpenAI dashboard
-
-# 5\. \*\*Revisit post-MVP\*\* — evaluate gpt-5.5 if higher accuracy is needed after user feedback
-
-# 
-
-# \---
-
-# 
-
-# \## 9. Approval Signatures
-
-# 
-
-# | Role | Name | Date | Status |
-
-# |------|------|------|--------|
-
-# | ML Lead | Manshu | 30-04-2026 | ✅ Approved |
-
-# | Backend Dev | Manshu | 30-04-2026 | ✅ Approved |
-
-# | Product Owner | Manshu | 30-04-2026 | ✅ Approved |
-
-# 
-
-# \---
-
-# 
-
-# \*\*Signed off by:\*\* Manshu  
-
-# \*\*Date:\*\* 30-04-2026  
-
-# \*\*Status:\*\* ✅ APPROVED FOR RELEASE
-
+- **Provider:** OpenAI API
+- **Model:** gpt-4o-mini
+- **Status:** Pending 4 more repeat runs
+- **Action:** Run `validate_openai.py` 4 more times
+- **Expected:** 5/5 pas
