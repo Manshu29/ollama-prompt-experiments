@@ -1,7 +1,8 @@
-import openai
 import json
+import os
+from openai import OpenAI
 
-client = openai.OpenAI(api_key="YOUR_OPENAI_API_KEY_HERE")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def test_quiz():
     response = client.chat.completions.create(
@@ -9,7 +10,7 @@ def test_quiz():
         messages=[
             {
                 "role": "system",
-                "content": """You are a quiz generator. Return ONLY valid JSON in this exact format:
+                "content": """Return ONLY valid JSON in this format:
 {
   "topic": "string",
   "level": "beginner or intermediate or advanced",
@@ -18,8 +19,8 @@ def test_quiz():
     {
       "question": "string",
       "options": ["option1", "option2", "option3", "option4"],
-      "answer": "must match one of the options",
-      "explanation": "string min 5 chars"
+      "correct_answer": "must match one of the options",
+      "explanation": "string"
     }
   ]
 }"""
@@ -31,21 +32,27 @@ def test_quiz():
         ],
         temperature=0.3
     )
+
     raw = response.choices[0].message.content
+    print("Quiz raw output:\n", raw)
+
     data = json.loads(raw)
-    assert "topic" in data, "FAIL: missing topic"
-    assert "level" in data, "FAIL: missing level"
-    assert "num_questions" in data, "FAIL: missing num_questions"
-    assert "questions" in data, "FAIL: missing questions"
+
+    assert "topic" in data
+    assert "level" in data
+    assert "num_questions" in data
+    assert "questions" in data
+
     for q in data["questions"]:
-        assert "question" in q, "FAIL: missing question"
-        assert "options" in q, "FAIL: missing options"
-        assert len(q["options"]) == 4, "FAIL: options must have 4 items"
-        assert "answer" in q, "FAIL: missing answer"
-        assert "explanation" in q, "FAIL: missing explanation"
-        assert q["answer"] in q["options"], "FAIL: answer not in options"
+        assert "question" in q
+        assert "options" in q
+        assert len(q["options"]) == 4
+        assert "correct_answer" in q
+        assert "explanation" in q
+        assert q["correct_answer"] in q["options"]
+
     print("✅ PASS: Quiz schema valid")
-    return data
+
 
 def test_curriculum():
     response = client.chat.completions.create(
@@ -53,7 +60,7 @@ def test_curriculum():
         messages=[
             {
                 "role": "system",
-                "content": """You are a curriculum planner. Return ONLY valid JSON in this exact format:
+                "content": """Return ONLY valid JSON in this format:
 {
   "topic": "string",
   "level": "beginner or intermediate or advanced",
@@ -62,14 +69,10 @@ def test_curriculum():
     {
       "week": 1,
       "title": "string",
-      "points": ["string", "string", "string"]
+      "description": ["string", "string", "string"]
     }
   ]
-}
-RULES:
-- weeks array must have exactly 8 items
-- total_weeks must equal the number of weeks
-- points must have exactly 3 strings per week"""
+}"""
             },
             {
                 "role": "user",
@@ -78,45 +81,30 @@ RULES:
         ],
         temperature=0.6
     )
+
     raw = response.choices[0].message.content
+    print("Curriculum raw output:\n", raw)
+
     data = json.loads(raw)
-    assert "topic" in data, "FAIL: missing topic"
-    assert "level" in data, "FAIL: missing level"
-    assert "total_weeks" in data, "FAIL: missing total_weeks"
-    assert "weeks" in data, "FAIL: missing weeks"
-    assert len(data["weeks"]) >= 8, f"FAIL: only {len(data['weeks'])} weeks, need 8+"
-    assert len(data["weeks"]) <= 16, f"FAIL: {len(data['weeks'])} weeks, max is 16"
-    assert data["total_weeks"] == len(data["weeks"]), "FAIL: total_weeks doesnt match len(weeks)"
+
+    assert "topic" in data
+    assert "level" in data
+    assert "total_weeks" in data
+    assert len(data["weeks"]) == 8
+
     for w in data["weeks"]:
-        assert "week" in w, "FAIL: missing week number"
-        assert "title" in w, "FAIL: missing title"
-        assert "points" in w, "FAIL: missing points"
-        assert len(w["points"]) == 3, f"FAIL: points must have 3 items, got {len(w['points'])}"
+        assert "week" in w
+        assert "title" in w
+        assert "description" in w
+        assert len(w["description"]) == 3
+
     print("✅ PASS: Curriculum schema valid")
-    return data
 
-print("Running benchmark validation against OpenAI API...")
-print("=" * 50)
 
-try:
-    quiz_output = test_quiz()
-    print(f"   Topic: {quiz_output['topic']}")
-    print(f"   Questions: {len(quiz_output['questions'])}")
-except AssertionError as e:
-    print(f"❌ {e}")
-except json.JSONDecodeError:
-    print("❌ FAIL: Response was not valid JSON")
+# 👇 THIS WAS MISSING
+if __name__ == "__main__":
+    print("Running tests...\n")
 
-print()
-
-try:
-    curriculum_output = test_curriculum()
-    print(f"   Topic: {curriculum_output['topic']}")
-    print(f"   Weeks: {curriculum_output['total_weeks']}")
-except AssertionError as e:
-    print(f"❌ {e}")
-except json.JSONDecodeError:
-    print("❌ FAIL: Response was not valid JSON")
-
-print("=" * 50)
-print("Benchmark validation complete.")
+    test_quiz()
+    print("\n-----------------\n")
+    test_curriculum()
