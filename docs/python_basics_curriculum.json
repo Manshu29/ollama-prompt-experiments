@@ -1,0 +1,97 @@
+{
+  "topic": "Python Basics",
+  "level": "beginner",
+  "total_weeks": 10,
+  "weeks": [
+    {
+      "week": 1,
+      "title": "Introduction to Python and Setup",
+      "points": [
+        "Install Python and set up a development environment using VS Code or IDLE",
+        "Understand what Python is and where it is used in the real world",
+        "Write and run your first Python script using print statements"
+      ]
+    },
+    {
+      "week": 2,
+      "title": "Variables, Data Types, and Input",
+      "points": [
+        "Declare variables and understand string, integer, float, and boolean types",
+        "Use the input() function to accept data from the user",
+        "Practice type conversion between int, float, and string"
+      ]
+    },
+    {
+      "week": 3,
+      "title": "Operators and Expressions",
+      "points": [
+        "Use arithmetic operators: addition, subtraction, multiplication, division, modulus",
+        "Understand comparison operators and how they return True or False",
+        "Combine operators in expressions and understand operator precedence"
+      ]
+    },
+    {
+      "week": 4,
+      "title": "Conditional Statements",
+      "points": [
+        "Write if, elif, and else blocks to control program flow",
+        "Use logical operators (and, or, not) to combine conditions",
+        "Build a simple decision-making program such as a grade calculator"
+      ]
+    },
+    {
+      "week": 5,
+      "title": "Loops",
+      "points": [
+        "Use for loops to iterate over ranges and sequences",
+        "Use while loops to repeat code while a condition is true",
+        "Apply break and continue to control loop execution"
+      ]
+    },
+    {
+      "week": 6,
+      "title": "Lists and Tuples",
+      "points": [
+        "Create and access elements in a list using indexing and slicing",
+        "Use list methods like append, remove, sort, and len",
+        "Understand tuples as immutable sequences and when to use them"
+      ]
+    },
+    {
+      "week": 7,
+      "title": "Dictionaries and Sets",
+      "points": [
+        "Create dictionaries and access values using keys",
+        "Use dictionary methods like keys(), values(), items(), and update()",
+        "Understand sets and perform union, intersection, and difference operations"
+      ]
+    },
+    {
+      "week": 8,
+      "title": "Functions",
+      "points": [
+        "Define reusable functions using def with parameters and return values",
+        "Understand the difference between local and global variable scope",
+        "Use default parameter values and keyword arguments in function calls"
+      ]
+    },
+    {
+      "week": 9,
+      "title": "File Handling and Error Handling",
+      "points": [
+        "Open, read, write, and close files using open() and the with statement",
+        "Handle errors gracefully using try, except, and finally blocks",
+        "Raise and create custom exceptions for better program control"
+      ]
+    },
+    {
+      "week": 10,
+      "title": "Modules, Packages, and Final Project",
+      "points": [
+        "Import and use built-in modules like math, random, and datetime",
+        "Understand how to install and import third-party packages using pip",
+        "Build a small command-line project combining all concepts learned"
+      ]
+    }
+  ]
+}
