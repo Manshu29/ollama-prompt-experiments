@@ -110,3 +110,97 @@ They have not been verified against the wl branch live ai_service.
 Treat as reference schemas until verified.
 
 ### Quiz Schema - quiz_generation endpoint
+
+{
+  "topic": "string - required",
+  "level": "beginner or intermediate or advanced - required",
+  "num_questions": 5,
+  "questions": [
+    {
+      "question": "string - required",
+      "options": ["exactly 4 strings - required"],
+      "answer": "must match one of the options - required",
+      "explanation": "string min 5 chars - required"
+    }
+  ]
+}
+
+### Curriculum Schema - curriculum_generation endpoint
+
+{
+  "topic": "string - required",
+  "level": "beginner or intermediate or advanced - required",
+  "total_weeks": "integer must equal number of weeks - required",
+  "weeks": [
+    {
+      "week": "integer sequential from 1 - required",
+      "title": "string - required",
+      "points": ["exactly 3 strings - required"]
+    }
+  ]
+}
+
+Constraint: Number of weeks must be between 8 and 16 inclusive.
+total_weeks must equal actual number of weeks exactly.
+
+---
+
+## 8. Known Limitations
+
+### Phase 1 - Ollama Local Models
+
+| Limitation | Detail |
+|---|---|
+| Week count constraint | llama3.2 always generates 6 weeks regardless of instructions |
+| Resolution | Safety net in generate_curriculum() pads to minimum 8 weeks |
+| Status | Permanent limitation at MVP scale for small local LLMs |
+
+### Phase 2 - OpenAI API
+
+| Limitation | Detail |
+|---|---|
+| API cost | Charged per token - monitor usage |
+| Rate limits | Depends on OpenAI plan tier |
+| Privacy | Data is sent to OpenAI servers |
+| Repeat runs | Only 1 validation run completed - more needed |
+
+---
+
+## 9. Phase 2 Repeat Runs - Pending
+
+To be completed after WL-95 is done.
+Run validate_openai.py 5 times and record results here.
+
+| Test ID | Run 1 | Run 2 | Run 3 | Run 4 | Run 5 |
+|---|---|---|---|---|---|
+| QUIZ-BEG-01 | PASS | PENDING | PENDING | PENDING | PENDING |
+| CURRICULUM-INT-01 | PASS | PENDING | PENDING | PENDING | PENDING |
+
+---
+
+## 10. Run Timestamps - Phase 1 Evidence
+
+| Run | Time | Result |
+|---|---|---|
+| Run 1 | 13:02:35 | 5/5 PASS |
+| Run 2 | 13:03:25 | 5/5 PASS |
+| Run 3 | 13:03:56 | 5/5 PASS |
+| Run 4 | 13:04:32 | 5/5 PASS |
+| Run 5 | 13:05:15 | 5/5 PASS |
+
+---
+
+## 11. Final Summary
+
+| Item | Phase 1 Ollama | Phase 2 OpenAI |
+|---|---|---|
+| All test cases passing | YES | YES |
+| 100% success rate | YES | Pending 5 runs |
+| Quiz schema aligned | YES | YES |
+| Curriculum schema aligned | YES with safety net | YES no safety net |
+| Failure cases documented | YES | YES |
+| Known limitations documented | YES | YES |
+| Safety net dependency disclosed | YES | N/A |
+| Sample valid output committed | YES | YES |
+| Provider comparison available | YES | YES |
+| Schema field names aligned | YES | YES |
